@@ -130,11 +130,18 @@ class Commands:
             )
         )
         if client:
-            username = await client.query("viewer { login }", path="viewer.login")
-            await evt.reply(
-                f"You're already logged in as @{username}, but you can "
-                f"[click here to switch to a different account]({login_url})"
-            )
+            try:
+                username = await client.query("viewer { login }", path="viewer.login")
+            except GraphQLError as e:
+                await evt.reply(
+                    f"You were logged in, but checking your credentials failed: {e}\n\n"
+                    f"[Click here to log in]({login_url})"
+                )
+            else:
+                await evt.reply(
+                    f"You're already logged in as @{username}, but you can "
+                    f"[click here to switch to a different account]({login_url})"
+                )
         else:
             await evt.reply(f"[Click here to log in]({login_url})")
 

@@ -134,7 +134,8 @@ class GitHubClient:
                 data = resp["data"]
             except KeyError:
                 raise GraphQLError(
-                    type="UNKNOWN_ERROR", message="Unknown error: GitHub didn't return any data"
+                    type="UNKNOWN_ERROR",
+                    message=resp.get("message", "Unknown error: GitHub didn't return any data"),
                 )
         if path:
             return recursive_get(data, path)
