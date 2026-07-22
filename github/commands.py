@@ -47,6 +47,9 @@ def authenticated(_outer_fn=None, *, required: bool = True, error: bool = True):
                         )
                     else:
                         await evt.reply(str(e))
+            except GitHubError as e:
+                if error:
+                    await evt.reply(str(e))
 
         return wrapper
 
@@ -132,7 +135,7 @@ class Commands:
         if client:
             try:
                 username = await client.query("viewer { login }", path="viewer.login")
-            except GraphQLError as e:
+            except (GraphQLError, GitHubError) as e:
                 await evt.reply(
                     f"You were logged in, but checking your credentials failed: {e}\n\n"
                     f"[Click here to log in]({login_url})"

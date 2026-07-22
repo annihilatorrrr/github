@@ -133,6 +133,9 @@ class GitHubClient:
             try:
                 data = resp["data"]
             except KeyError:
+                if "message" in resp and "documentation_url" in resp and "status" in resp:
+                    resp["status_code"] = int(resp["status"])
+                    raise GitHubError(**resp)
                 raise GraphQLError(
                     type="UNKNOWN_ERROR",
                     message=resp.get("message", "Unknown error: GitHub didn't return any data"),
